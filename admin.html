@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>لوحة إدارة المربين - Eng Marwan ALnasree</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+        background: radial-gradient(circle at top right, #ecfeff 0%, #f8fafc 35%, #f1f5f9 100%);
+        color: #0f172a;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .glass-card {
+        backdrop-filter: blur(14px);
+        background: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        box-shadow: 0 20px 40px rgba(15, 118, 110, 0.08);
+      }
+      .input {
+        width: 100%;
+        border-radius: 1rem;
+        border: 1px solid #cbd5f5;
+        background: white;
+        padding: 0.65rem 0.95rem;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+      }
+      .input:focus {
+        outline: none;
+        border-color: #0d9488;
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
+      }
+      .section-title {
+        font-size: clamp(1.4rem, 2vw + 0.4rem, 2.2rem);
+        font-weight: 800;
+        color: #0f172a;
+      }
+      .subheading {
+        color: #475569;
+        line-height: 1.8;
+      }
+      table th,
+      table td {
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="relative overflow-hidden">
+      <div class="absolute inset-0 pointer-events-none">
+        <svg class="absolute -top-20 left-0 w-72 text-emerald-100" viewBox="0 0 375 356" fill="currentColor">
+          <path d="M75.8 16.5C120-9.9 166.3-8.3 212.3 6.9c46 15.3 91 43.9 117.3 82.5s33.1 85.2 13.2 120.4c-19.9 35.3-65.9 57-111 83.7-45 26.8-88.9 58.5-128.6 57.8-39.7-.7-75.2-34.8-90.9-74C-2.3 237.9 2.7 193.3 18 150.7 33.4 108 59.1 66.8 75.8 16.5Z" />
+        </svg>
+        <svg class="absolute top-24 right-0 w-80 text-sky-100" viewBox="0 0 400 400" fill="currentColor">
+          <circle cx="200" cy="200" r="200" fill-opacity="0.22" />
+        </svg>
+      </div>
+      <div class="relative max-w-6xl mx-auto px-6 pt-14 pb-16">
+        <div class="flex flex-wrap items-center gap-10">
+          <div class="flex-1 space-y-6">
+            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-white/80 border border-emerald-100 text-emerald-700">
+              لوحة التحكم الرسمية لمنصة Ross 308 — Eng Marwan ALnasree
+            </span>
+            <h1 class="text-4xl md:text-5xl font-black leading-tight text-emerald-900">
+              إدارة المربين والمصادقات المركزية
+            </h1>
+            <p class="text-lg text-slate-600 leading-8 max-w-2xl">
+              تحكم بالوصول إلى التطبيق الميداني، وافتح الدورات الجديدة، وراجع السجلات اليومية لكل مربي ضمن مزارع فروج اللحم.
+            </p>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-600">
+              <a href="index.html" class="px-4 py-2 rounded-full bg-white/70 border border-sky-100 hover:border-sky-200 transition">العودة إلى واجهة المربين</a>
+              <span class="px-4 py-2 rounded-full bg-white/70 border border-emerald-100">مزامنة كاملة مع بيانات التطبيق</span>
+            </div>
+          </div>
+          <div class="flex-1 min-w-[280px]">
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+              <p class="text-sm font-semibold text-emerald-600 mb-4">لمحة الأمن والوصول</p>
+              <ul class="space-y-2 text-sm text-slate-600 leading-6 list-disc pr-4">
+                <li>حماية باسم مستخدم وكلمة مرور (افتراضيًا admin / ross308).</li>
+                <li>لا يمكن للمربي تسجيل الدخول إلا بعد الموافقة على حسابه.</li>
+                <li>تعديل الاسم أو الهاتف أو عدد الصوص محجوز لما بعد فتح دورة جديدة.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-6 pb-24 space-y-16 flex-1 w-full">
+      <section class="space-y-6">
+        <h2 class="section-title">تسجيل دخول الإدارة</h2>
+        <p class="subheading">يرجى استخدام بيانات الاعتماد المصرح بها. يمكن تغيير كلمة المرور بعد تسجيل الدخول.</p>
+        <div class="glass-card rounded-3xl p-6 space-y-4" id="adminLoginCard">
+          <form id="adminLoginForm" class="space-y-3 md:w-2/3">
+            <label class="block text-sm font-semibold text-slate-700">اسم المستخدم
+              <input name="adminUser" type="text" class="input mt-1" required />
+            </label>
+            <label class="block text-sm font-semibold text-slate-700">كلمة المرور
+              <input name="adminPass" type="password" class="input mt-1" required />
+            </label>
+            <button type="submit" class="w-full md:w-auto rounded-2xl bg-emerald-600 text-white px-6 py-2.5 font-semibold hover:bg-emerald-700 transition">دخول الإدارة</button>
+          </form>
+          <p class="text-xs text-slate-500">البيانات الافتراضية: المستخدم <span class="font-semibold">admin</span> وكلمة المرور <span class="font-semibold">ross308</span>.</p>
+          <p id="adminLoginFeedback" class="text-xs text-rose-500"></p>
+        </div>
+        <div id="adminDashboard" class="hidden space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-lg font-bold text-emerald-800">قائمة المربين</h3>
+              <p class="text-xs text-slate-500">اختر مربيًا لعرض سجلاته اليومية والتحكم بحالته.</p>
+            </div>
+            <button id="adminLogout" class="text-sm px-4 py-2 rounded-full bg-rose-50 text-rose-600 border border-rose-200">تسجيل خروج الإدارة</button>
+          </div>
+          <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <table class="min-w-full text-sm">
+              <thead class="bg-slate-100 text-slate-600">
+                <tr>
+                  <th class="px-4 py-3 text-right">المربي</th>
+                  <th class="px-4 py-3 text-right">الهاتف</th>
+                  <th class="px-4 py-3 text-right">عدد الصوص</th>
+                  <th class="px-4 py-3 text-right">الحالة</th>
+                  <th class="px-4 py-3 text-right">آخر تحديث</th>
+                  <th class="px-4 py-3 text-right">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="adminGrowerTable" class="divide-y divide-slate-200 text-slate-700"></tbody>
+            </table>
+          </div>
+          <div class="glass-card rounded-3xl p-6 space-y-3" id="adminRecordViewer">
+            <h3 class="text-lg font-bold text-sky-800">سجل البيانات للمربي المحدد</h3>
+            <div id="adminSelectedGrower" class="text-sm text-slate-500">اختر "عرض السجلات" للاطلاع على التفاصيل.</div>
+            <div id="adminRecords" class="space-y-3"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-slate-200 py-8 text-center text-sm text-slate-500">
+      © <span id="year"></span> منصة إدارة فروج اللحم — من تطوير Eng Marwan ALnasree
+    </footer>
+
+    <script>
+      const STORAGE_KEY = 'ross308-broiler-app';
+      let appData = loadAppData();
+      let adminLoggedIn = false;
+      let selectedGrowerId = null;
+
+      function loadAppData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return { growers: [] };
+          }
+          const parsed = JSON.parse(raw);
+          if (!parsed.growers) parsed.growers = [];
+          return parsed;
+        } catch (error) {
+          console.warn('إعادة تهيئة البيانات بسبب خطأ في القراءة', error);
+          return { growers: [] };
+        }
+      }
+
+      function saveAppData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      }
+
+      function formatDateTime(iso) {
+        if (!iso) return '—';
+        const date = new Date(iso);
+        return date.toLocaleString('ar-SY', { hour12: false });
+      }
+
+      function renderGrowerTable() {
+        const table = document.getElementById('adminGrowerTable');
+        table.innerHTML = '';
+        if (!appData.growers.length) {
+          const empty = document.createElement('tr');
+          empty.innerHTML = '<td colspan="6" class="px-4 py-6 text-center text-slate-500">لا يوجد مربون مسجلون بعد.</td>';
+          table.appendChild(empty);
+          return;
+        }
+        appData.growers
+          .slice()
+          .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))
+          .forEach(grower => {
+            const tr = document.createElement('tr');
+
+            const nameTd = document.createElement('td');
+            nameTd.className = 'px-4 py-3 font-semibold';
+            nameTd.textContent = grower.name;
+            tr.appendChild(nameTd);
+
+            const phoneTd = document.createElement('td');
+            phoneTd.className = 'px-4 py-3';
+            phoneTd.textContent = grower.phone;
+            tr.appendChild(phoneTd);
+
+            const placedTd = document.createElement('td');
+            placedTd.className = 'px-4 py-3';
+            placedTd.textContent = grower.placed || 0;
+            tr.appendChild(placedTd);
+
+            const statusTd = document.createElement('td');
+            statusTd.className = 'px-4 py-3';
+            const status = [];
+            status.push(grower.approved ? 'موافق عليه' : 'بانتظار الموافقة');
+            status.push(grower.active ? 'مفعل' : 'معطل');
+            status.push(grower.cycleLocked ? 'الدورة مقفلة' : 'الدورة مفتوحة');
+            statusTd.textContent = status.join(' | ');
+            tr.appendChild(statusTd);
+
+            const updatedTd = document.createElement('td');
+            updatedTd.className = 'px-4 py-3';
+            updatedTd.textContent = formatDateTime(grower.updatedAt || grower.createdAt);
+            tr.appendChild(updatedTd);
+
+            const actionsTd = document.createElement('td');
+            actionsTd.className = 'px-4 py-3';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex flex-wrap gap-2';
+
+            const approveBtn = document.createElement('button');
+            approveBtn.className = 'px-3 py-1 rounded-full text-xs bg-emerald-100 text-emerald-700';
+            approveBtn.textContent = grower.approved ? 'إلغاء الموافقة' : 'الموافقة';
+            approveBtn.dataset.action = 'toggleApprove';
+            approveBtn.dataset.id = grower.id;
+            wrapper.appendChild(approveBtn);
+
+            const activeBtn = document.createElement('button');
+            activeBtn.className = 'px-3 py-1 rounded-full text-xs bg-sky-100 text-sky-700';
+            activeBtn.textContent = grower.active ? 'تعطيل' : 'تفعيل';
+            activeBtn.dataset.action = 'toggleActive';
+            activeBtn.dataset.id = grower.id;
+            wrapper.appendChild(activeBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.className = 'px-3 py-1 rounded-full text-xs bg-amber-100 text-amber-700';
+            editBtn.textContent = 'تعديل';
+            editBtn.dataset.action = 'edit';
+            editBtn.dataset.id = grower.id;
+            wrapper.appendChild(editBtn);
+
+            const cycleBtn = document.createElement('button');
+            cycleBtn.className = 'px-3 py-1 rounded-full text-xs bg-indigo-100 text-indigo-700';
+            cycleBtn.textContent = 'بدء دورة جديدة';
+            cycleBtn.dataset.action = 'newCycle';
+            cycleBtn.dataset.id = grower.id;
+            wrapper.appendChild(cycleBtn);
+
+            const viewBtn = document.createElement('button');
+            viewBtn.className = 'px-3 py-1 rounded-full text-xs bg-slate-100 text-slate-700';
+            viewBtn.textContent = 'عرض السجلات';
+            viewBtn.dataset.action = 'view';
+            viewBtn.dataset.id = grower.id;
+            wrapper.appendChild(viewBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'px-3 py-1 rounded-full text-xs bg-rose-100 text-rose-700';
+            deleteBtn.textContent = 'حذف';
+            deleteBtn.dataset.action = 'delete';
+            deleteBtn.dataset.id = grower.id;
+            wrapper.appendChild(deleteBtn);
+
+            actionsTd.appendChild(wrapper);
+            tr.appendChild(actionsTd);
+
+            table.appendChild(tr);
+          });
+      }
+
+      function handleAdminLogin(event) {
+        event.preventDefault();
+        const user = event.target.adminUser.value.trim();
+        const pass = event.target.adminPass.value.trim();
+        if (user === 'admin' && pass === 'ross308') {
+          adminLoggedIn = true;
+          document.getElementById('adminLoginCard').classList.add('hidden');
+          document.getElementById('adminDashboard').classList.remove('hidden');
+          document.getElementById('adminLoginFeedback').textContent = '';
+          renderGrowerTable();
+        } else {
+          document.getElementById('adminLoginFeedback').textContent = 'بيانات تسجيل الدخول غير صحيحة.';
+        }
+      }
+
+      function adminLogout() {
+        adminLoggedIn = false;
+        selectedGrowerId = null;
+        document.getElementById('adminDashboard').classList.add('hidden');
+        document.getElementById('adminLoginCard').classList.remove('hidden');
+        document.getElementById('adminLoginForm').reset();
+        document.getElementById('adminLoginFeedback').textContent = 'تم تسجيل خروج الإدارة.';
+        document.getElementById('adminSelectedGrower').textContent = 'اختر "عرض السجلات" للاطلاع على التفاصيل.';
+        document.getElementById('adminRecords').innerHTML = '';
+      }
+
+      function adminActionHandler(event) {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const action = target.dataset.action;
+        const id = target.dataset.id;
+        if (!action || !id) return;
+        const grower = appData.growers.find(g => g.id === id);
+        if (!grower) return;
+        switch (action) {
+          case 'toggleApprove':
+            grower.approved = !grower.approved;
+            break;
+          case 'toggleActive':
+            grower.active = !grower.active;
+            break;
+          case 'edit':
+            editGrower(grower);
+            break;
+          case 'newCycle':
+            startNewCycle(grower);
+            break;
+          case 'view':
+            showGrowerRecords(id);
+            break;
+          case 'delete':
+            deleteGrower(id);
+            break;
+          default:
+            return;
+        }
+        saveAppData();
+        renderGrowerTable();
+        if (selectedGrowerId === id) {
+          showGrowerRecords(id);
+        }
+      }
+
+      function editGrower(grower) {
+        const newPassword = prompt('تحديث كلمة المرور للمربي (اتركه فارغًا للإبقاء على الحالي)', '');
+        if (newPassword !== null && newPassword.trim()) {
+          grower.password = newPassword.trim();
+        }
+        if (grower.cycleLocked) {
+          alert('لا يمكن تعديل الاسم أو رقم الهاتف أو عدد الصوص خلال الدورة الحالية. افتح دورة جديدة أولًا ثم أعد المحاولة.');
+          return;
+        }
+        const newNameInput = prompt('تحديث اسم المربي', grower.name);
+        if (newNameInput === null) return;
+        const trimmedName = newNameInput.trim();
+        if (trimmedName) {
+          grower.name = trimmedName;
+        }
+        const newPhoneInput = prompt('تحديث رقم الهاتف', grower.phone);
+        if (newPhoneInput === null) return;
+        const trimmedPhone = newPhoneInput.trim();
+        if (trimmedPhone && trimmedPhone !== grower.phone) {
+          if (appData.growers.some(g => g.phone === trimmedPhone && g.id !== grower.id)) {
+            alert('رقم الهاتف مستخدم من قبل مربي آخر. لم يتم تحديث البيانات.');
+          } else {
+            grower.phone = trimmedPhone;
+          }
+        }
+        const newPlacedInput = prompt('تحديث عدد الصوص المستلمة', grower.placed);
+        if (newPlacedInput === null) return;
+        const parsedPlaced = Number(newPlacedInput);
+        if (!Number.isNaN(parsedPlaced) && parsedPlaced > 0) {
+          grower.placed = parsedPlaced;
+        }
+        grower.updatedAt = new Date().toISOString();
+        alert('تم تحديث بيانات المربي للدورة الجديدة.');
+      }
+
+      function startNewCycle(grower) {
+        const confirmReset = confirm('سيتم فتح دورة جديدة لهذا المربي مع مسح السجلات الحالية وإعادة طلب الموافقة. هل ترغب بالمتابعة؟');
+        if (!confirmReset) return;
+        grower.records = [];
+        grower.cycleLocked = false;
+        grower.approved = false;
+        grower.updatedAt = new Date().toISOString();
+        selectedGrowerId = grower.id;
+        showGrowerRecords(grower.id);
+        alert('تم فتح دورة جديدة. يمكن الآن تعديل البيانات الأساسية قبل إدخال أول سجل.');
+      }
+
+      function deleteGrower(id) {
+        const confirmDelete = confirm('سيتم حذف المربي وجميع سجلاته. هل أنت متأكد؟');
+        if (!confirmDelete) return;
+        appData.growers = appData.growers.filter(g => g.id !== id);
+        if (selectedGrowerId === id) {
+          selectedGrowerId = null;
+          document.getElementById('adminSelectedGrower').textContent = 'تم حذف المربي.';
+          document.getElementById('adminRecords').innerHTML = '';
+        }
+        alert('تم حذف المربي بنجاح.');
+      }
+
+      function showGrowerRecords(id) {
+        const grower = appData.growers.find(g => g.id === id);
+        selectedGrowerId = id;
+        const container = document.getElementById('adminRecords');
+        container.innerHTML = '';
+        if (!grower) {
+          document.getElementById('adminSelectedGrower').textContent = 'تعذر العثور على المربي.';
+          return;
+        }
+        document.getElementById('adminSelectedGrower').textContent = `${grower.name} — ${grower.phone}`;
+        if (!grower.records.length) {
+          const empty = document.createElement('p');
+          empty.className = 'text-sm text-slate-500';
+          empty.textContent = 'لا توجد سجلات بعد لهذه الدورة.';
+          container.appendChild(empty);
+          return;
+        }
+        grower.records
+          .slice()
+          .reverse()
+          .forEach(record => {
+            const card = document.createElement('div');
+            card.className = 'rounded-2xl border border-slate-200 bg-white p-4 text-sm space-y-2';
+            const header = document.createElement('div');
+            header.className = 'flex flex-wrap items-center justify-between gap-2';
+            header.innerHTML = `<span class="font-semibold text-emerald-700">اليوم ${record.age}</span><span class="text-xs text-slate-500">${formatDateTime(record.timestamp)}</span>`;
+            card.appendChild(header);
+            const metrics = document.createElement('div');
+            metrics.className = 'grid md:grid-cols-3 gap-2';
+            metrics.innerHTML = `
+              <div>الطيور الحية: <span class="font-semibold">${record.alive}</span></div>
+              <div>متوسط الوزن: <span class="font-semibold">${record.avgWeight} كغ</span></div>
+              <div>العلف: <span class="font-semibold">${record.feed} كغ</span></div>
+              <div>الماء: <span class="font-semibold">${record.water} لتر</span></div>
+              <div>النفوق: <span class="font-semibold">${record.mortality}</span></div>
+            `;
+            card.appendChild(metrics);
+            if (record.vaccination) {
+              const vacc = document.createElement('div');
+              vacc.className = 'text-xs text-slate-600';
+              vacc.textContent = `ملاحظات اللقاح: ${record.vaccination}`;
+              card.appendChild(vacc);
+            }
+            if (record.notes) {
+              const notes = document.createElement('div');
+              notes.className = 'text-xs text-slate-600';
+              notes.textContent = `ملاحظات إضافية: ${record.notes}`;
+              card.appendChild(notes);
+            }
+            if (record.vaccineLog || record.supportNotes) {
+              const health = document.createElement('div');
+              health.className = 'text-xs text-slate-500 border-t border-slate-200 pt-2';
+              health.innerHTML = `
+                <div>سجل اللقاحات المحفوظ: ${record.vaccineLog || '—'}</div>
+                <div>ملاحظات داعمة: ${record.supportNotes || '—'}</div>
+              `;
+              card.appendChild(health);
+            }
+            const actions = document.createElement('div');
+            actions.className = 'flex flex-wrap gap-2 pt-2 border-t border-dashed border-slate-200 mt-2';
+
+            const editRecordBtn = document.createElement('button');
+            editRecordBtn.className = 'px-3 py-1 rounded-full text-xs bg-amber-50 text-amber-700 border border-amber-200';
+            editRecordBtn.textContent = 'تعديل السجل';
+            editRecordBtn.dataset.action = 'editRecord';
+            editRecordBtn.dataset.growerId = grower.id;
+            editRecordBtn.dataset.recordId = record.id;
+            actions.appendChild(editRecordBtn);
+
+            const deleteRecordBtn = document.createElement('button');
+            deleteRecordBtn.className = 'px-3 py-1 rounded-full text-xs bg-rose-50 text-rose-700 border border-rose-200';
+            deleteRecordBtn.textContent = 'حذف السجل';
+            deleteRecordBtn.dataset.action = 'deleteRecord';
+            deleteRecordBtn.dataset.growerId = grower.id;
+            deleteRecordBtn.dataset.recordId = record.id;
+            actions.appendChild(deleteRecordBtn);
+
+            card.appendChild(actions);
+            container.appendChild(card);
+          });
+      }
+
+      function handleRecordAction(event) {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const action = target.dataset.action;
+        const growerId = target.dataset.growerId;
+        const recordId = target.dataset.recordId;
+        if (!action || !growerId || !recordId) return;
+        if (action === 'editRecord') {
+          editGrowerRecord(growerId, recordId);
+        } else if (action === 'deleteRecord') {
+          deleteGrowerRecord(growerId, recordId);
+        }
+      }
+
+      function editGrowerRecord(growerId, recordId) {
+        const grower = appData.growers.find(g => g.id === growerId);
+        if (!grower) return;
+        const record = grower.records.find(r => r.id === recordId);
+        if (!record) return;
+        const newAgeInput = prompt('تعديل العمر (يوم)', record.age);
+        if (newAgeInput === null) return;
+        const newAge = Number(newAgeInput);
+        if (!Number.isFinite(newAge) || newAge <= 0) {
+          alert('قيمة العمر غير صالحة. لم يتم تعديل السجل.');
+          return;
+        }
+        const newAliveInput = prompt('تعديل عدد الطيور الحية', record.alive);
+        if (newAliveInput === null) return;
+        const newAlive = Number(newAliveInput);
+        if (!Number.isFinite(newAlive) || newAlive < 0) {
+          alert('قيمة الطيور الحية غير صالحة. لم يتم تعديل السجل.');
+          return;
+        }
+        const newWeightInput = prompt('تعديل متوسط الوزن (كغ)', record.avgWeight);
+        if (newWeightInput === null) return;
+        const newWeight = Number(newWeightInput);
+        if (!Number.isFinite(newWeight) || newWeight < 0) {
+          alert('قيمة الوزن غير صالحة. لم يتم تعديل السجل.');
+          return;
+        }
+        const newFeedInput = prompt('تعديل العلف الموزع (كغ)', record.feed);
+        if (newFeedInput === null) return;
+        const newFeed = Number(newFeedInput);
+        if (!Number.isFinite(newFeed) || newFeed < 0) {
+          alert('قيمة العلف غير صالحة. لم يتم تعديل السجل.');
+          return;
+        }
+        const newWaterInput = prompt('تعديل الماء المستهلك (لتر)', record.water);
+        if (newWaterInput === null) return;
+        const newWater = Number(newWaterInput);
+        if (!Number.isFinite(newWater) || newWater < 0) {
+          alert('قيمة الماء غير صالحة. لم يتم تعديل السجل.');
+          return;
+        }
+        const newMortalityInput = prompt('تعديل النفوق', record.mortality || 0);
+        if (newMortalityInput === null) return;
+        const newMortality = Number(newMortalityInput);
+        if (!Number.isFinite(newMortality) || newMortality < 0) {
+          alert('قيمة النفوق غير صالحة. لم يتم تعديل السجل.');
+          return;
+        }
+        const vaccinationNotes = prompt('تعديل ملاحظات اللقاح', record.vaccination || '');
+        if (vaccinationNotes === null) return;
+        const additionalNotes = prompt('تعديل الملاحظات الإضافية', record.notes || '');
+        if (additionalNotes === null) return;
+        const savedVaccineLog = prompt('تعديل سجل اللقاحات المحفوظ', record.vaccineLog || '');
+        if (savedVaccineLog === null) return;
+        const supportNotes = prompt('تعديل الملاحظات الداعمة', record.supportNotes || '');
+        if (supportNotes === null) return;
+
+        record.age = newAge;
+        record.alive = newAlive;
+        record.avgWeight = Number(newWeight.toFixed(3));
+        record.feed = Number(newFeed.toFixed(3));
+        record.water = Number(newWater.toFixed(3));
+        record.mortality = newMortality;
+        record.vaccination = vaccinationNotes.trim();
+        record.notes = additionalNotes.trim();
+        record.vaccineLog = savedVaccineLog.trim();
+        record.supportNotes = supportNotes.trim();
+        record.timestamp = new Date().toISOString();
+        grower.updatedAt = record.timestamp;
+        saveAppData();
+        renderGrowerTable();
+        showGrowerRecords(growerId);
+        alert('تم تعديل السجل بنجاح.');
+      }
+
+      function deleteGrowerRecord(growerId, recordId) {
+        const grower = appData.growers.find(g => g.id === growerId);
+        if (!grower) return;
+        const recordIndex = grower.records.findIndex(r => r.id === recordId);
+        if (recordIndex === -1) return;
+        const confirmDelete = confirm('سيتم حذف هذا السجل نهائيًا. هل تريد المتابعة؟');
+        if (!confirmDelete) return;
+        grower.records.splice(recordIndex, 1);
+        grower.updatedAt = new Date().toISOString();
+        saveAppData();
+        renderGrowerTable();
+        showGrowerRecords(growerId);
+        alert('تم حذف السجل.');
+      }
+
+      document.getElementById('adminLoginForm').addEventListener('submit', handleAdminLogin);
+      document.getElementById('adminLogout').addEventListener('click', adminLogout);
+      document.getElementById('adminGrowerTable').addEventListener('click', adminActionHandler);
+      document.getElementById('adminRecords').addEventListener('click', handleRecordAction);
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
