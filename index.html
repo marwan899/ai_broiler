@@ -14,6 +14,19 @@
       }
       body {
         font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+        background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 40%, #eef2ff 100%);
+        color: #0f172a;
+        background-attachment: fixed;
+      }
+      .glass-card {
+        backdrop-filter: blur(16px);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.22);
+        box-shadow: 0 25px 50px rgba(14, 165, 233, 0.09);
+      }
+      .pill {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(14, 165, 233, 0.18));
+        color: #0c4a6e;
         background: radial-gradient(circle at top right, #ecfeff 0%, #f8fafc 35%, #f1f5f9 100%);
         color: #0f172a;
       }
@@ -30,6 +43,7 @@
       .input {
         width: 100%;
         border-radius: 1rem;
+        border: 1px solid #c7d2fe;
         border: 1px solid #cbd5f5;
         background: white;
         padding: 0.65rem 0.95rem;
@@ -38,6 +52,8 @@
       }
       .input:focus {
         outline: none;
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
         border-color: #0d9488;
         box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18);
       }
@@ -84,6 +100,349 @@
           </div>
           <div class="flex-1 min-w-[280px]">
             <div class="glass-card rounded-3xl p-6 md:p-8">
+              <p class="text-sm font-semibold text-emerald-600 mb-4">مؤشرات سريعة تتكيف مع عمر القطيع</p>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/70 p-4 border border-emerald-100">
+                  <p class="text-xs text-emerald-700">الوزن المستهدف للطير</p>
+                  <p class="text-2xl font-black text-emerald-900" id="metricTargetWeight">—</p>
+                  <p class="text-xs text-emerald-700 mt-1">حسب دليل Ross 308</p>
+                </div>
+                <div class="rounded-2xl bg-gradient-to-br from-sky-50 to-sky-100/70 p-4 border border-sky-100">
+                  <p class="text-xs text-sky-700">برنامج الإضاءة</p>
+                  <p class="text-2xl font-black text-sky-900" id="metricLighting">—</p>
+                  <p class="text-xs text-sky-700 mt-1" id="metricLightingNote"></p>
+                </div>
+                <div class="rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/60 p-4 border border-amber-100">
+                  <p class="text-xs text-amber-700">درجة الحرارة المثلى</p>
+                  <p class="text-2xl font-black text-amber-900" id="metricTemperature">—</p>
+                  <p class="text-xs text-amber-700 mt-1">مهيّأة للانتقال السلس</p>
+                </div>
+                <div class="rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100/60 p-4 border border-indigo-100">
+                  <p class="text-xs text-indigo-700">ماء متوقع لكل طير</p>
+                  <p class="text-2xl font-black text-indigo-900" id="metricWaterPerBird">—</p>
+                  <p class="text-xs text-indigo-700 mt-1">يعاد حسابه وفق العمر والعدد</p>
+                </div>
+              </div>
+              <p class="text-xs text-slate-500 mt-4 leading-6">
+                يتم تحديث هذه المؤشرات آليًا عند تغيير عمر القطيع أو بياناته لتبقى القرارات اليومية مرتبطة بأحدث المعايير.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="relative z-10 max-w-6xl mx-auto px-6 pb-24 space-y-16">
+      <section class="space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="section-title">لوحة أداء القطيع</h2>
+            <p class="subheading">أدخل بيانات القطيع الحالية وستحصل على تحليل فوري مقارنة بالمعايير المستهدفة.</p>
+          </div>
+          <div class="text-sm text-slate-500 bg-white/80 px-4 py-3 rounded-2xl border border-slate-200 shadow-sm">
+            يتم تحديث المؤشرات والبيانات آليًا بالاعتماد على عمر الطيور والقراءات المدخلة من قبلك.
+          </div>
+        </div>
+        <div class="grid lg:grid-cols-5 gap-6">
+          <div class="lg:col-span-2 space-y-4">
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <label class="block text-sm font-semibold text-slate-700">العمر (يوم)
+                  <input id="age" type="number" min="1" max="60" value="21" class="input mt-2" />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">عدد الصوص المستلمة
+                  <input id="placed" type="number" min="1" value="2000" class="input mt-2" />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">عدد الطيور الحية الآن
+                  <input id="alive" type="number" min="0" value="1950" class="input mt-2" />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">متوسط الوزن الحي (غم)
+                  <input id="avgWeight" type="number" min="0" step="1" value="950" class="input mt-2" />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">العلف الموزع (كغ)
+                  <input id="feed" type="number" step="1" value="1800" class="input mt-2" />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">الماء المستهلك (لتر)
+                  <input id="water" type="number" step="1" value="3200" class="input mt-2" />
+                </label>
+              </div>
+              <button id="reset" class="w-full mt-2 rounded-2xl bg-emerald-600 text-white py-2.5 font-semibold hover:bg-emerald-700 transition">
+                إعادة ضبط القيم الافتراضية
+              </button>
+            </div>
+            <div class="glass-card rounded-3xl p-6 space-y-3">
+              <h3 class="text-lg font-bold text-emerald-800">تعليق خبير</h3>
+              <p id="expertComment" class="text-sm leading-7 text-slate-600">
+                أدخل بياناتك لعرض تحليل الأداء والنقاط الحرجة التي تستحق المتابعة اليومية.
+              </p>
+            </div>
+          </div>
+          <div class="lg:col-span-3 grid md:grid-cols-2 gap-4">
+            <div class="rounded-3xl bg-white/90 border border-emerald-100 p-6 shadow-sm">
+              <p class="text-xs text-emerald-600 mb-1">معدل التحويل الغذائي</p>
+              <p class="text-3xl font-black text-emerald-900" id="fcr">-</p>
+              <p class="text-xs text-slate-500" id="fcrNote"></p>
+            </div>
+            <div class="rounded-3xl bg-white/90 border border-sky-100 p-6 shadow-sm">
+              <p class="text-xs text-sky-600 mb-1">متوسط الوزن مقابل الهدف</p>
+              <p class="text-3xl font-black text-sky-900" id="weightDelta">-</p>
+              <p class="text-xs text-slate-500" id="weightNote"></p>
+            </div>
+            <div class="rounded-3xl bg-white/90 border border-amber-100 p-6 shadow-sm">
+              <p class="text-xs text-amber-600 mb-1">نسبة الحيوية</p>
+              <p class="text-3xl font-black text-amber-900" id="livability">-</p>
+              <p class="text-xs text-slate-500" id="livabilityNote"></p>
+            </div>
+            <div class="rounded-3xl bg-white/90 border border-rose-100 p-6 shadow-sm">
+              <p class="text-xs text-rose-600 mb-1">معدل استهلاك الماء/العلف</p>
+              <p class="text-3xl font-black text-rose-900" id="waterFeed">-</p>
+              <p class="text-xs text-slate-500" id="waterNote"></p>
+            </div>
+            <div class="md:col-span-2 rounded-3xl bg-white/90 border border-indigo-100 p-6 shadow-sm">
+              <p class="text-xs text-indigo-600 mb-1">كمية الماء المتوقعة</p>
+              <p class="text-3xl font-black text-indigo-900" id="waterExpected">-</p>
+              <p class="text-xs text-slate-500" id="waterExpectedNote"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="section-title">مناخ العنبر وبرنامج الإضاءة</h2>
+        <p class="subheading">حدد عمر القطيع للحصول على توصيات الحرارة، الرطوبة، التهوية، وساعات الإضاءة حسب دليل Ross 308.</p>
+        <div class="glass-card rounded-3xl p-6 space-y-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <label class="block text-sm font-semibold text-slate-700">اختر العمر الحالي (يوم)
+              <input id="envAge" type="range" min="1" max="50" value="21" class="w-full mt-3 accent-emerald-600" />
+            </label>
+            <div class="flex flex-wrap gap-3 text-sm text-slate-500">
+              <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700">حرارة متدرجة</span>
+              <span class="px-3 py-1 rounded-full bg-sky-50 text-sky-700">رطوبة 55-65%</span>
+              <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-700">برنامج إضاءة Ross 308</span>
+            </div>
+          </div>
+          <div class="grid md:grid-cols-5 gap-4 text-sm">
+            <div class="rounded-2xl bg-white/90 border border-emerald-100 p-4">
+              <p class="text-xs text-emerald-600">درجة الحرارة المستهدفة</p>
+              <p class="text-2xl font-extrabold text-emerald-900" id="envTemp">-</p>
+              <p class="text-xs text-slate-500">منصة التدفئة والمراوح الجانبية</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 border border-sky-100 p-4">
+              <p class="text-xs text-sky-600">الرطوبة النسبية</p>
+              <p class="text-2xl font-extrabold text-sky-900" id="envRh">-</p>
+              <p class="text-xs text-slate-500">تجنب الغبار والحفاظ على الفرشة</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 border border-amber-100 p-4">
+              <p class="text-xs text-amber-600">سرعة الهواء (م/ث)</p>
+              <p class="text-2xl font-extrabold text-amber-900" id="envAirSpeed">-</p>
+              <p class="text-xs text-slate-500">زيادة تدريجية بعد عمر 21 يوم</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 border border-rose-100 p-4">
+              <p class="text-xs text-rose-600">تغيير الهواء/ساعة</p>
+              <p class="text-2xl font-extrabold text-rose-900" id="envACH">-</p>
+              <p class="text-xs text-slate-500">معدل تهوية حدّي للحد من الأمونيا</p>
+            </div>
+            <div class="rounded-2xl bg-white/90 border border-indigo-100 p-4">
+              <p class="text-xs text-indigo-600">برنامج الإضاءة</p>
+              <p class="text-2xl font-extrabold text-indigo-900" id="lightingHours">-</p>
+              <p class="text-xs text-slate-500" id="lightingNote"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="section-title">برنامج التغذية والعلف</h2>
+        <p class="subheading">استنادًا إلى توصيات Ross 308 (كغ لكل ألف طير) مع التركيز على توازن الأحماض الأمينية والطاقة.</p>
+        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+          <table class="min-w-full text-sm">
+            <thead class="bg-slate-100 text-slate-600">
+              <tr>
+                <th class="px-4 py-3 text-right">المرحلة</th>
+                <th class="px-4 py-3 text-right">العمر (يوم)</th>
+                <th class="px-4 py-3 text-right">العلف/1000 طير (كغ)</th>
+                <th class="px-4 py-3 text-right">طاقة ممثلة (كيلو كالوري/كغ)</th>
+                <th class="px-4 py-3 text-right">بروتين خام %</th>
+                <th class="px-4 py-3 text-right">ميثيونين + سيستين %</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-700">
+              <tr>
+                <td class="px-4 py-3 font-semibold">بادي 1</td>
+                <td class="px-4 py-3">0 - 7</td>
+                <td class="px-4 py-3">160</td>
+                <td class="px-4 py-3">3000</td>
+                <td class="px-4 py-3">23.0</td>
+                <td class="px-4 py-3">1.05</td>
+              </tr>
+              <tr class="bg-emerald-50/40">
+                <td class="px-4 py-3 font-semibold">بادي 2</td>
+                <td class="px-4 py-3">8 - 14</td>
+                <td class="px-4 py-3">290</td>
+                <td class="px-4 py-3">3050</td>
+                <td class="px-4 py-3">21.5</td>
+                <td class="px-4 py-3">0.96</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold">نامي</td>
+                <td class="px-4 py-3">15 - 28</td>
+                <td class="px-4 py-3">970</td>
+                <td class="px-4 py-3">3100</td>
+                <td class="px-4 py-3">19.0</td>
+                <td class="px-4 py-3">0.88</td>
+              </tr>
+              <tr class="bg-emerald-50/40">
+                <td class="px-4 py-3 font-semibold">ناهٍ</td>
+                <td class="px-4 py-3">29 - 42</td>
+                <td class="px-4 py-3">1325</td>
+                <td class="px-4 py-3">3200</td>
+                <td class="px-4 py-3">18.0</td>
+                <td class="px-4 py-3">0.83</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold">ناهٍ متأخر (اختياري)</td>
+                <td class="px-4 py-3">43 - 49</td>
+                <td class="px-4 py-3">760</td>
+                <td class="px-4 py-3">3300</td>
+                <td class="px-4 py-3">17.0</td>
+                <td class="px-4 py-3">0.80</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid md:grid-cols-3 gap-4 text-sm text-slate-600">
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-base font-bold text-emerald-800 mb-2">تركيز الكالسيوم</h3>
+            <p>حافظ على 0.90% كالسيوم في بادي 1 و2، و0.80% في النامي، مع توازن مثالي للكالسيوم/الفوسفور المتاح 2:1.</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-base font-bold text-sky-800 mb-2">إضافة الزيوت</h3>
+            <p>الزيوت النباتية النظيفة ترفع الطاقة دون زيادة الرطوبة. استهدف دمج زيت 3-4% مع خلط جيد لجنب التكتلات.</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5">
+            <h3 class="text-base font-bold text-amber-800 mb-2">إدارة العلف المتبقي</h3>
+            <p>فحص العلف المتبقي مرتين يوميًا لضبط معدل التوزيع، ومنع الفرشة الرطبة والتكتلات حول الخطوط.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="section-title">البرنامج الصحي واللقاحات</h2>
+        <p class="subheading">اترك هذه الخانات فارغة ليقوم المربي بتسجيل البرنامج الصحي يدويًا حسب توصيات الطبيب البيطري المحلي.</p>
+        <div class="grid md:grid-cols-2 gap-4 text-sm text-slate-600">
+          <div class="glass-card rounded-3xl p-6 space-y-3">
+            <h3 class="text-lg font-bold text-emerald-800">سجل اللقاحات (يُملأ من قبل المربي)</h3>
+            <textarea id="vaccineLog" class="input h-40 resize-y" placeholder="اليوم / المرض / نوع اللقاح / الملاحظات"></textarea>
+            <p class="text-xs text-slate-500">يتم حفظ هذا السجل ضمن بيانات المربي عند الإرسال من بوابة المربين.</p>
+          </div>
+          <div class="glass-card rounded-3xl p-6 space-y-3">
+            <h3 class="text-lg font-bold text-sky-800">ملاحظات داعمة</h3>
+            <textarea id="biosecurityNotes" class="input h-40 resize-y" placeholder="مثال: برنامج دعم حيوي، إلكترولايت، علاجات"></textarea>
+            <p class="text-xs text-slate-500">يمكن مشاركة هذه الملاحظات مع الإدارة للمراجعة.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="section-title">قائمة المتابعة اليومية</h2>
+        <p class="subheading">علامات حيوية مرتبطة بتوصيات Ross 308 لضمان الوصول إلى الأداء الأمثل.</p>
+        <div class="glass-card rounded-3xl p-6">
+          <div class="grid md:grid-cols-2 gap-4 text-sm">
+            <label class="flex items-start gap-3">
+              <input type="checkbox" class="mt-1 accent-emerald-600 checklist" data-label="تسجيل درجات الحرارة والرطوبة كل 6 ساعات" />
+              <span>تسجيل درجات الحرارة والرطوبة كل 6 ساعات ومقارنتها بالمنحنى.</span>
+            </label>
+            <label class="flex items-start gap-3">
+              <input type="checkbox" class="mt-1 accent-emerald-600 checklist" data-label="قياس وزن 100 طير عشوائي" />
+              <span>قياس وزن 100 طير عشوائي مرتين أسبوعيًا وتعديل العلف تبعًا للفروقات.</span>
+            </label>
+            <label class="flex items-start gap-3">
+              <input type="checkbox" class="mt-1 accent-emerald-600 checklist" data-label="فحص خطوط الماء" />
+              <span>فحص خطوط الماء لتنظيف النيبلات وضبط الارتفاع حسب عمر الطيور.</span>
+            </label>
+            <label class="flex items-start gap-3">
+              <input type="checkbox" class="mt-1 accent-emerald-600 checklist" data-label="تسجيل النفوق وأسبابه" />
+              <span>تسجيل النفوق يوميًا مع التشريح والتحليل السريع للأسباب.</span>
+            </label>
+            <label class="flex items-start gap-3">
+              <input type="checkbox" class="mt-1 accent-emerald-600 checklist" data-label="إزالة الفرشة الرطبة" />
+              <span>إزالة الفرشة الرطبة وإضافة نشارة جافة لتقليل الأمونيا والتهاب الجلد.</span>
+            </label>
+            <label class="flex items-start gap-3">
+              <input type="checkbox" class="mt-1 accent-emerald-600 checklist" data-label="معايرة أجهزة التهوية" />
+              <span>معايرة أجهزة التهوية والسخانات أسبوعيًا للتأكد من التوزيع المتجانس.</span>
+            </label>
+          </div>
+          <div class="mt-6 text-sm font-semibold text-emerald-700" id="checklistSummary">0 من 6 مهام مكتملة</div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="section-title">بوابة المربين</h2>
+        <p class="subheading">سجّل بياناتك وشاركها مع الإدارة، مع ضمان الموافقة قبل الولوج إلى لوحة التحكم.</p>
+        <div class="grid lg:grid-cols-3 gap-6">
+          <div class="glass-card rounded-3xl p-6 space-y-4">
+            <h3 class="text-lg font-bold text-emerald-800">تسجيل مربي جديد</h3>
+            <form id="registerForm" class="space-y-3">
+              <label class="block text-sm font-semibold text-slate-700">الاسم الكامل
+                <input name="registerName" type="text" class="input mt-1" required />
+              </label>
+              <label class="block text-sm font-semibold text-slate-700">رقم الهاتف (اسم المستخدم)
+                <input name="registerPhone" type="tel" class="input mt-1" required />
+              </label>
+              <label class="block text-sm font-semibold text-slate-700">كلمة المرور
+                <input name="registerPassword" type="password" class="input mt-1" required />
+              </label>
+              <label class="block text-sm font-semibold text-slate-700">عدد الصوص المستلمة (بداية الدورة)
+                <input name="registerPlaced" type="number" min="1" class="input mt-1" required />
+              </label>
+              <button type="submit" class="w-full rounded-2xl bg-emerald-600 text-white py-2.5 font-semibold hover:bg-emerald-700 transition">تسجيل</button>
+            </form>
+            <p id="registerFeedback" class="text-xs text-slate-500"></p>
+          </div>
+          <div class="glass-card rounded-3xl p-6 space-y-4">
+            <h3 class="text-lg font-bold text-sky-800">تسجيل دخول المربي</h3>
+            <form id="growerLoginForm" class="space-y-3">
+              <label class="block text-sm font-semibold text-slate-700">رقم الهاتف
+                <input name="growerPhone" type="tel" class="input mt-1" required />
+              </label>
+              <label class="block text-sm font-semibold text-slate-700">كلمة المرور
+                <input name="growerPassword" type="password" class="input mt-1" required />
+              </label>
+              <button type="submit" class="w-full rounded-2xl bg-sky-600 text-white py-2.5 font-semibold hover:bg-sky-700 transition">دخول</button>
+            </form>
+            <div class="flex items-center justify-between text-xs text-slate-500">
+              <span>لا يمكن الدخول قبل موافقة الإدارة.</span>
+              <button id="growerLogout" class="text-rose-600 font-semibold hidden">تسجيل الخروج</button>
+            </div>
+            <p id="growerLoginFeedback" class="text-xs text-slate-500"></p>
+          </div>
+          <div id="growerDataCard" class="glass-card rounded-3xl p-6 space-y-4 hidden">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg font-bold text-amber-800" id="growerWelcome">مرحبًا بالمربي</h3>
+              <span class="text-xs px-3 py-1 rounded-full bg-emerald-100 text-emerald-700" id="growerStatus">قيد الموافقة</span>
+            </div>
+            <form id="growerRecordForm" class="space-y-3">
+              <div class="grid md:grid-cols-2 gap-3">
+                <label class="block text-sm font-semibold text-slate-700">العمر الحالي (يوم)
+                  <input name="recordAge" type="number" min="1" max="60" class="input mt-1" required />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">عدد الطيور الحية
+                  <input name="recordAlive" type="number" min="0" class="input mt-1" required />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">متوسط الوزن (غم)
+                  <input name="recordWeight" type="number" step="1" min="0" class="input mt-1" required />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">العلف الموزع (كغ)
+                  <input name="recordFeed" type="number" step="1" min="0" class="input mt-1" required />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">الماء المستهلك (لتر)
+                  <input name="recordWater" type="number" step="1" min="0" class="input mt-1" required />
+                </label>
+                <label class="block text-sm font-semibold text-slate-700">النفوق خلال اليوم
+                  <input name="recordMortality" type="number" min="0" value="0" class="input mt-1" />
+                </label>
+              </div>
               <p class="text-sm font-semibold text-emerald-600 mb-4">مؤشرات سريعة</p>
               <div class="grid grid-cols-2 gap-4">
                 <div class="rounded-2xl bg-emerald-50 p-4 border border-emerald-100">
@@ -455,6 +814,9 @@
         <p class="subheading">لأي تطوير إضافي أو تخصيص بحسب مزرعتك، يسعد Eng Marwan ALnasree بالتواصل معك.</p>
         <div class="glass-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
           <div class="flex-1 space-y-2 text-sm text-slate-600">
+            <p>البريد الإلكتروني: <a class="text-emerald-600 font-semibold hover:underline" href="mailto:marwanshalan88@gmail.com">marwanshalan88@gmail.com</a></p>
+            <p>رقم الهاتف: <span class="font-semibold text-slate-800">+9647709939342</span> (واتساب متاح).</p>
+            <p>الموقع: العراق – صلاح الدين | جاهز للاستشارات الميدانية والرقمية.</p>
             <p>البريد الإلكتروني: <a class="text-emerald-600 font-semibold hover:underline" href="mailto:marwan.alnasree@example.com">marwan.alnasree@example.com</a></p>
             <p>رقم الهاتف: <span class="font-semibold text-slate-800">+963 999 000 111</span> (واتساب متاح).</p>
             <p>الموقع: حماة - سوريا | دعم عن بعد لكامل الشرق الأوسط.</p>
@@ -569,6 +931,13 @@
         const age = Number(document.getElementById('age').value) || 1;
         const placed = Number(document.getElementById('placed').value) || 0;
         const alive = Number(document.getElementById('alive').value) || 0;
+        const avgWeightGr = Number(document.getElementById('avgWeight').value) || 0;
+        const avgWeightKg = avgWeightGr / 1000;
+        const feed = Number(document.getElementById('feed').value) || 0;
+        const water = Number(document.getElementById('water').value) || 0;
+
+        const targetWeightKg = interpolate(rossStandards, age, 'weight');
+        const totalGain = Math.max(0, alive * avgWeightKg - placed * chickStartWeight);
         const avgWeight = Number(document.getElementById('avgWeight').value) || 0;
         const feed = Number(document.getElementById('feed').value) || 0;
         const water = Number(document.getElementById('water').value) || 0;
@@ -583,6 +952,14 @@
             : 'أعلى من الهدف؛ راجع جودة العلف والتهوية.'
           : 'أدخل بيانات صحيحة للعلف والوزن.';
 
+        const deltaGr = (avgWeightKg - targetWeightKg) * 1000;
+        const deltaText = Number.isFinite(deltaGr)
+          ? deltaGr >= 0
+            ? `+${deltaGr.toFixed(0)} غم`
+            : `${deltaGr.toFixed(0)} غم`
+          : '—';
+        document.getElementById('weightDelta').textContent = deltaText;
+        document.getElementById('weightNote').textContent = `الهدف لعمر ${age} يوم هو ${(targetWeightKg * 1000).toFixed(0)} غم للطير.`;
         const delta = avgWeight - targetWeight;
         const deltaText = delta >= 0 ? `+${delta.toFixed(2)} كغ` : `${delta.toFixed(2)} كغ`;
         document.getElementById('weightDelta').textContent = deltaText;
@@ -614,6 +991,9 @@
           document.getElementById('waterExpectedNote').textContent = 'أدخل عدد الطيور والماء لحساب الاستهلاك المتوقع.';
         }
 
+        const adg = age > 0 ? ((avgWeightKg - chickStartWeight) / age) * 1000 : 0;
+        const expertLines = [];
+        if (deltaGr < -100) expertLines.push('الوزن أقل من الهدف، راجع برنامج التدفئة وتوزيع العلف.');
         const adg = age > 0 ? ((avgWeight - chickStartWeight) / age) * 1000 : 0;
         const expertLines = [];
         if (delta < -0.1) expertLines.push('الوزن أقل من الهدف، راجع برنامج التدفئة وتوزيع العلف.');
@@ -624,6 +1004,12 @@
           expertLines.push(`أداء متوازن. متوسط الزيادة اليومية ${adg.toFixed(0)} غم، حافظ على التهوية التدريجية.`);
         }
         document.getElementById('expertComment').textContent = expertLines.join(' ');
+        const envSlider = document.getElementById('envAge');
+        if (envSlider && Number(envSlider.value) !== age) {
+          envSlider.value = age;
+        }
+        renderEnvironment(age);
+        updateHeroMetrics(age);
       }
 
       function envForAge(age) {
@@ -645,6 +1031,7 @@
         };
       }
 
+      function renderEnvironment(age) {
       function updateEnvironment() {
         const age = Number(document.getElementById('envAge').value) || 1;
         const env = envForAge(age);
@@ -657,6 +1044,37 @@
         document.getElementById('lightingNote').textContent = lighting.descriptor;
       }
 
+      function handleEnvSlider(event) {
+        const age = Number(event.target.value) || 1;
+        document.getElementById('age').value = age;
+        updateDashboard();
+      }
+
+      function updateHeroMetrics(age) {
+        const targetWeightKg = interpolate(rossStandards, age, 'weight');
+        document.getElementById('metricTargetWeight').textContent = `${Math.round(targetWeightKg * 1000)} غم`;
+
+        const lighting = lightingForAge(age);
+        document.getElementById('metricLighting').textContent = `${lighting.light.toFixed(1)} س ضوء`;
+        document.getElementById('metricLightingNote').textContent = lighting.descriptor;
+
+        const env = envForAge(age);
+        document.getElementById('metricTemperature').textContent = `${env.temp.toFixed(1)}°C`;
+
+        const perBird = interpolate(waterStandards, age, 'perBird');
+        if (Number.isFinite(perBird) && perBird > 0) {
+          const perBirdMl = perBird * 1000;
+          document.getElementById('metricWaterPerBird').textContent = `${perBirdMl.toFixed(0)} مل`;
+        } else {
+          document.getElementById('metricWaterPerBird').textContent = '—';
+        }
+      }
+
+      function updateChecklistSummary() {
+        const items = document.querySelectorAll('.checklist');
+        const completed = Array.from(items).filter(item => item.checked).length;
+        document.getElementById('checklistSummary').textContent = `${completed} من ${items.length} مهام مكتملة`;
+      }
       function updateChecklistSummary() {
         const items = document.querySelectorAll('.checklist');
         const completed = Array.from(items).filter(item => item.checked).length;
@@ -686,6 +1104,7 @@
         document.getElementById('placed').value = grower.placed || 0;
         document.getElementById('age').value = record.age || 1;
         document.getElementById('alive').value = record.alive || 0;
+        document.getElementById('avgWeight').value = record.avgWeight ? Math.round(record.avgWeight * 1000) : 0;
         document.getElementById('avgWeight').value = record.avgWeight || 0;
         document.getElementById('feed').value = record.feed || 0;
         document.getElementById('water').value = record.water || 0;
@@ -722,6 +1141,27 @@
         saveAppData();
         form.reset();
         document.getElementById('registerFeedback').textContent = 'تم إرسال طلب التسجيل. سيتم إشعارك بعد موافقة الإدارة.';
+      }
+
+      function completeGrowerLogin(grower, { feedbackMessage = 'تم تسجيل الدخول بنجاح.' } = {}) {
+        if (!grower) return;
+        loggedGrowerId = grower.id;
+        if (appData.activeSessionId !== grower.id) {
+          appData.activeSessionId = grower.id;
+          saveAppData();
+        }
+        document.getElementById('growerLogout').classList.remove('hidden');
+        document.getElementById('growerDataCard').classList.remove('hidden');
+        document.getElementById('growerWelcome').textContent = `مرحبًا ${grower.name}`;
+        const statusEl = document.getElementById('growerStatus');
+        statusEl.textContent = grower.approved ? 'مفعل' : 'قيد الموافقة';
+        statusEl.className = grower.approved
+          ? 'text-xs px-3 py-1 rounded-full bg-emerald-100 text-emerald-700'
+          : 'text-xs px-3 py-1 rounded-full bg-amber-100 text-amber-700';
+        document.getElementById('growerRecordFeedback').textContent = '';
+        if (typeof feedbackMessage === 'string') {
+          document.getElementById('growerLoginFeedback').textContent = feedbackMessage;
+        }
         refreshGrowerSelector();
       }
 
@@ -759,6 +1199,7 @@
           const form = document.getElementById('growerRecordForm');
           form.recordAge.value = lastRecord.age;
           form.recordAlive.value = lastRecord.alive;
+          form.recordWeight.value = Math.round((lastRecord.avgWeight || 0) * 1000);
           form.recordWeight.value = lastRecord.avgWeight;
           form.recordFeed.value = lastRecord.feed;
           form.recordWater.value = lastRecord.water;
@@ -770,6 +1211,31 @@
           form.reset();
           form.recordAge.value = 1;
           form.recordAlive.value = grower.placed;
+          form.recordWeight.value = Math.round(chickStartWeight * 1000);
+        }
+      }
+
+      function handleGrowerLogin(event) {
+        event.preventDefault();
+        const phone = event.target.growerPhone.value.trim();
+        const password = event.target.growerPassword.value.trim();
+        const grower = appData.growers.find(g => g.phone === phone && g.password === password);
+        const feedback = document.getElementById('growerLoginFeedback');
+        if (!grower) {
+          feedback.textContent = 'بيانات الدخول غير صحيحة.';
+          return;
+        }
+        if (!grower.approved) {
+          feedback.textContent = 'لم تتم الموافقة على الحساب بعد. تواصل مع الإدارة.';
+          return;
+        }
+        if (!grower.active) {
+          feedback.textContent = 'الحساب معطل. يرجى التواصل مع الإدارة.';
+          return;
+        }
+        completeGrowerLogin(grower);
+      }
+
         }
       }
 
@@ -777,6 +1243,24 @@
         loggedGrowerId = null;
         document.getElementById('growerLogout').classList.add('hidden');
         document.getElementById('growerDataCard').classList.add('hidden');
+        appData.activeSessionId = null;
+        saveAppData();
+        document.getElementById('growerRecordFeedback').textContent = '';
+        document.getElementById('growerLoginFeedback').textContent = 'تم تسجيل الخروج.';
+      }
+
+      function restoreActiveSession() {
+        const id = appData.activeSessionId;
+        if (!id) return;
+        const grower = appData.growers.find(g => g.id === id);
+        if (!grower || !grower.approved || !grower.active) {
+          appData.activeSessionId = null;
+          saveAppData();
+          return;
+        }
+        completeGrowerLogin(grower, { feedbackMessage: 'تم استعادة الجلسة تلقائيًا.' });
+      }
+
         document.getElementById('growerLoginFeedback').textContent = 'تم تسجيل الخروج.';
       }
 
@@ -792,11 +1276,13 @@
           return;
         }
         const form = event.target;
+        const recordWeightGr = Number(form.recordWeight.value) || 0;
         const record = {
           id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
           timestamp: new Date().toISOString(),
           age: Number(form.recordAge.value),
           alive: Number(form.recordAlive.value),
+          avgWeight: recordWeightGr / 1000,
           avgWeight: Number(form.recordWeight.value),
           feed: Number(form.recordFeed.value),
           water: Number(form.recordWater.value),
@@ -830,6 +1316,10 @@
       document.getElementById('growerLoginForm').addEventListener('submit', handleGrowerLogin);
       document.getElementById('growerLogout').addEventListener('click', growerLogout);
       document.getElementById('growerRecordForm').addEventListener('submit', submitGrowerRecord);
+      document.querySelectorAll('#age, #placed, #alive, #avgWeight, #feed, #water').forEach(el => {
+        el.addEventListener('input', updateDashboard);
+      });
+      document.getElementById('envAge').addEventListener('input', handleEnvSlider);
       document.getElementById('growerSelector').addEventListener('change', handleGrowerSelection);
       document.querySelectorAll('#age, #placed, #alive, #avgWeight, #feed, #water').forEach(el => {
         el.addEventListener('input', updateDashboard);
@@ -839,6 +1329,7 @@
         document.getElementById('age').value = 21;
         document.getElementById('placed').value = 2000;
         document.getElementById('alive').value = 1950;
+        document.getElementById('avgWeight').value = 950;
         document.getElementById('avgWeight').value = 0.95;
         document.getElementById('feed').value = 1800;
         document.getElementById('water').value = 3200;
@@ -846,6 +1337,11 @@
       });
       document.querySelectorAll('.checklist').forEach(el => el.addEventListener('change', updateChecklistSummary));
 
+      restoreActiveSession();
+      if (!loggedGrowerId) {
+        updateDashboard();
+      }
+      updateChecklistSummary();
       updateDashboard();
       updateEnvironment();
       updateChecklistSummary();
