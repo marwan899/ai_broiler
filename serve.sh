@@ -20,3 +20,6 @@ cleanup() {
 trap cleanup INT TERM
 
 python3 -m http.server --bind 0.0.0.0 "$PORT"
+Press Ctrl+C لإيقاف الخادم.
+MSG
+python3 -m http.server "$PORT"
