@@ -289,6 +289,12 @@
 
       function handleAdminLogin(event) {
         event.preventDefault();
+        const form = event.target;
+        const elements = form.elements;
+        const userField = elements.namedItem('adminUser');
+        const passField = elements.namedItem('adminPass');
+        const user = userField ? userField.value.trim() : '';
+        const pass = passField ? passField.value.trim() : '';
         const user = event.target.adminUser.value.trim();
         const pass = event.target.adminPass.value.trim();
         if (user === 'admin' && pass === 'ross308') {
@@ -297,6 +303,7 @@
           document.getElementById('adminDashboard').classList.remove('hidden');
           document.getElementById('adminLoginFeedback').textContent = '';
           renderGrowerTable();
+          document.getElementById('adminDashboard').scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
           document.getElementById('adminLoginFeedback').textContent = 'بيانات تسجيل الدخول غير صحيحة.';
         }

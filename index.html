@@ -534,6 +534,13 @@
     </main>
 
     <footer class="border-t border-slate-200 py-8 text-center text-sm text-slate-500">
+      <p>© <span id="year"></span> منصة إدارة فروج اللحم — من تطوير Eng Marwan ALnasree</p>
+      <p class="mt-2">
+        <a class="inline-flex items-center gap-2 text-emerald-600 font-semibold hover:underline" href="admin.html">
+          الانتقال إلى لوحة الإدارة المستقلة
+          <span aria-hidden="true">↗</span>
+        </a>
+      </p>
       © <span id="year"></span> منصة إدارة فروج اللحم — من تطوير Eng Marwan ALnasree
     </footer>
     </div>
@@ -584,6 +591,140 @@
           appShell.classList.remove('hidden');
         }
         authGate.classList.add('hidden');
+      }
+
+      function showAuthGate() {
+        authGate.classList.remove('hidden');
+        if (!appShell.classList.contains('hidden')) {
+          appShell.classList.add('hidden');
+        }
+        authGate.classList.add('hidden');
+      }
+
+      function interpolate(list, day, key) {
+        if (!Array.isArray(list) || list.length === 0) return 0;
+        if (day <= list[0].day) return list[0][key];
+        if (day >= list[list.length - 1].day) return list[list.length - 1][key];
+        for (let i = 0; i < list.length - 1; i++) {
+          const a = list[i];
+          const b = list[i + 1];
+          if (day >= a.day && day <= b.day) {
+            const t = (day - a.day) / (b.day - a.day);
+            return a[key] + t * (b[key] - a[key]);
+          }
+        }
+        return list[list.length - 1][key];
+      }
+
+      function loadAppData() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return { growers: [], activeSessionId: null };
+          }
+          const parsed = JSON.parse(raw);
+          if (!parsed.growers) parsed.growers = [];
+          if (!('activeSessionId' in parsed)) parsed.activeSessionId = null;
+          return parsed;
+        } catch (error) {
+          console.warn('إعادة تهيئة البيانات بسبب خطأ في القراءة', error);
+          return { growers: [], activeSessionId: null };
+        }
+      }
+
+      function saveAppData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      }
+
+      function formatDateTime(iso) {
+        if (!iso) return '—';
+        const date = new Date(iso);
+        return date.toLocaleString('ar-SY', { hour12: false });
+      }
+
+      function expectedWaterIntake(age, birds) {
+        if (!birds || birds <= 0) return NaN;
+        const perBird = interpolate(waterStandards, age, 'perBird');
+        return perBird * birds;
+      }
+
+      function lightingForAge(age) {
+        const light = interpolate(lightingProgram, age, 'light');
+        let descriptor = lightingProgram.find(step => step.day >= age);
+        if (!descriptor) descriptor = lightingProgram[lightingProgram.length - 1];
+        const dark = Math.max(0, 24 - light);
+        return { light, dark, descriptor: descriptor.intensity };
+      }
+      function updateDashboard() {
+        const age = Number(document.getElementById('age').value) || 1;
+        const placed = Number(document.getElementById('placed').value) || 0;
+        const alive = Number(document.getElementById('alive').value) || 0;
+        const avgWeightGr = Number(document.getElementById('avgWeight').value) || 0;
+        const avgWeightKg = avgWeightGr / 1000;
+        const feed = Number(document.getElementById('feed').value) || 0;
+        const water = Number(document.getElementById('water').value) || 0;
+
+        const targetWeightKg = interpolate(rossStandards, age, 'weight');
+        const totalGain = Math.max(0, alive * avgWeightKg - placed * chickStartWeight);
+        const fcr = totalGain > 0 ? feed / totalGain : NaN;
+        document.getElementById('fcr').textContent = Number.isFinite(fcr) ? fcr.toFixed(2) : '—';
+        document.getElementById('fcrNote').textContent = Number.isFinite(fcr)
+          ? fcr <= 1.65
+            ? 'ضمن الأداء الممتاز (≤ 1.65)'
+            : 'أعلى من الهدف؛ راجع جودة العلف والتهوية.'
+          : 'أدخل بيانات صحيحة للعلف والوزن.';
+
+        const deltaGr = (avgWeightKg - targetWeightKg) * 1000;
+        const deltaText = Number.isFinite(deltaGr)
+          ? deltaGr >= 0
+            ? `+${deltaGr.toFixed(0)} غم`
+            : `${deltaGr.toFixed(0)} غم`
+          : '—';
+        document.getElementById('weightDelta').textContent = deltaText;
+        document.getElementById('weightNote').textContent = `الهدف لعمر ${age} يوم هو ${(targetWeightKg * 1000).toFixed(0)} غم للطير.`;
+
+        const livability = placed > 0 ? (alive / placed) * 100 : 0;
+        document.getElementById('livability').textContent = placed ? `${livability.toFixed(1)}%` : '—';
+        document.getElementById('livabilityNote').textContent = livability >= 96
+          ? 'حيوية ممتازة، استمر بالمراقبة اليومية.'
+          : 'تحقق من برنامج اللقاحات وجودة الفرشة والتهوية.';
+
+        const waterFeed = feed > 0 ? water / feed : NaN;
+        document.getElementById('waterFeed').textContent = Number.isFinite(waterFeed) ? waterFeed.toFixed(2) : '—';
+        document.getElementById('waterNote').textContent = Number.isFinite(waterFeed)
+          ? waterFeed >= 1.6 && waterFeed <= 1.9
+            ? 'نسبة مثالية حسب توصيات Ross 308.'
+            : 'اضبط خطوط الماء أو راقب استهلاك العلف.'
+          : 'أدخل بيانات الماء والعلف.';
+
+        const birdsForWater = alive || placed;
+        const expectedWater = expectedWaterIntake(age, birdsForWater);
+        if (Number.isFinite(expectedWater)) {
+          document.getElementById('waterExpected').textContent = `${expectedWater.toFixed(0)} لتر`;
+          const diff = water - expectedWater;
+          const diffText = diff >= 0 ? `(+${diff.toFixed(0)} لتر)` : `(${diff.toFixed(0)} لتر)`;
+          document.getElementById('waterExpectedNote').textContent = `المعدل المرجعي ${(expectedWater / Math.max(birdsForWater, 1)).toFixed(2)} لتر/طير. الفارق اليومي ${diffText}.`;
+        } else {
+          document.getElementById('waterExpected').textContent = '—';
+          document.getElementById('waterExpectedNote').textContent = 'أدخل عدد الطيور والماء لحساب الاستهلاك المتوقع.';
+        }
+
+        const adg = age > 0 ? ((avgWeightKg - chickStartWeight) / age) * 1000 : 0;
+        const expertLines = [];
+        if (deltaGr < -100) expertLines.push('الوزن أقل من الهدف، راجع برنامج التدفئة وتوزيع العلف.');
+        if (Number.isFinite(fcr) && fcr > 1.8) expertLines.push('معدل التحويل مرتفع؛ تحقق من جودة العلف ومحتوى الطاقة.');
+        if (livability < 95) expertLines.push('نسبة الحيوية منخفضة، استشر الطبيب البيطري حول أسباب النفوق.');
+        if (Number.isFinite(expectedWater) && water < expectedWater * 0.85) expertLines.push('استهلاك الماء أقل من المتوقع، افحص ضغط الخطوط ونظافة النبلات.');
+        if (expertLines.length === 0) {
+          expertLines.push(`أداء متوازن. متوسط الزيادة اليومية ${adg.toFixed(0)} غم، حافظ على التهوية التدريجية.`);
+        }
+        document.getElementById('expertComment').textContent = expertLines.join(' ');
+        const envSlider = document.getElementById('envAge');
+        if (envSlider && Number(envSlider.value) !== age) {
+          envSlider.value = age;
+        }
+        renderEnvironment(age);
+        updateHeroMetrics(age);
       }
 
       function showAuthGate() {
