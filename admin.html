@@ -168,6 +168,14 @@
         } catch (error) {
           console.warn('إعادة تهيئة البيانات بسبب خطأ في القراءة', error);
           return { growers: [], activeSessionId: null };
+            return { growers: [] };
+          }
+          const parsed = JSON.parse(raw);
+          if (!parsed.growers) parsed.growers = [];
+          return parsed;
+        } catch (error) {
+          console.warn('إعادة تهيئة البيانات بسبب خطأ في القراءة', error);
+          return { growers: [] };
         }
       }
 
@@ -436,6 +444,7 @@
             metrics.innerHTML = `
               <div>الطيور الحية: <span class="font-semibold">${record.alive}</span></div>
               <div>متوسط الوزن: <span class="font-semibold">${Math.round((record.avgWeight || 0) * 1000)} غم</span></div>
+              <div>متوسط الوزن: <span class="font-semibold">${record.avgWeight} كغ</span></div>
               <div>العلف: <span class="font-semibold">${record.feed} كغ</span></div>
               <div>الماء: <span class="font-semibold">${record.water} لتر</span></div>
               <div>النفوق: <span class="font-semibold">${record.mortality}</span></div>
@@ -527,6 +536,13 @@
           return;
         }
         const newWeight = newWeightGr / 1000;
+        const newWeightInput = prompt('تعديل متوسط الوزن (كغ)', record.avgWeight);
+        if (newWeightInput === null) return;
+        const newWeight = Number(newWeightInput);
+        if (!Number.isFinite(newWeight) || newWeight < 0) {
+          alert('قيمة الوزن غير صالحة. لم يتم تعديل السجل.');
+          return;
+        }
         const newFeedInput = prompt('تعديل العلف الموزع (كغ)', record.feed);
         if (newFeedInput === null) return;
         const newFeed = Number(newFeedInput);
